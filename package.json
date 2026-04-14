@@ -1,0 +1,61 @@
+{
+  "name": "card-championship-league",
+  "productName": "Card Championship League",
+  "version": "0.1.0",
+  "main": "engine/electron/index.js",
+  "description": "A visual novel about climbing the Card Championship League through tournament card battles.",
+  "author": "Allen",
+  "license": "MIT",
+  "homepage": "https://example.com/card-championship-league",
+  "build": {
+    "appId": "com.example.cardchampionshipleague",
+    "win": {
+      "target": [
+        "nsis"
+      ],
+      "icon": "assets/icons/icon.ico"
+    },
+    "mac": {
+      "category": "public.app-category.games",
+      "target": [
+        "zip"
+      ],
+      "type": "distribution",
+      "icon": "assets/icons/icon.icns",
+      "entitlements": "engine/electron/entitlements.mac.plist",
+      "entitlementsInherit": "engine/electron/entitlements.mac.plist",
+      "hardenedRuntime": true,
+      "gatekeeperAssess": false
+    },
+    "linux": {
+      "category": "Game",
+      "target": [
+        "AppImage"
+      ],
+      "synopsis": "A tournament-driven visual novel with fast card battles.",
+      "description": "Card Championship League is a story-first tournament card battler built with Monogatari and designed around quick, readable duels."
+    },
+    "icon": "assets/icons/512x512.png",
+    "afterSign": "engine/electron/notarize.js"
+  },
+  "scripts": {
+    "serve": "parcel index.html",
+    "start": "yarn electron . --enable-logging",
+    "build": "yarn electron-builder -mwl",
+    "build:windows": "yarn electron-builder -w",
+    "build:mac": "yarn electron-builder -m",
+    "build:linux": "yarn electron-builder -l"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^2.4.0",
+    "electron": "^33.2.0",
+    "electron-builder": "^25.0.5"
+  },
+  "staticFiles": {
+    "staticPath": "assets",
+    "staticOutPath": "assets"
+  },
+  "dependencies": {
+    "playwright": "^1.59.1"
+  }
+}

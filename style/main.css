@@ -1,0 +1,627 @@
+/**
+ * =============================================================================
+ * This is the file where all your styling should go in.
+ * Instead of modifying the styles found in the monogatari.css file or others,
+ * you should overwrite those styles in this file.
+ *
+ * The CSS selectors shown are not an extensive list but they are the most
+ * common you might want to change. To find what other elements are available,
+ * you can take a look at the monogatari.css file or use your browser's dev
+ * tools to inspect the elements.
+ * =============================================================================
+**/
+
+/**
+ * ===========================
+ * General Styling
+ * ===========================
+**/
+
+/* General Style */
+body {
+
+}
+
+/* Simple Button styles*/
+button {
+
+}
+
+/* Simple Button Style on Hover */
+button:hover {
+
+}
+
+/* General Styling for Menu Screens */
+[data-screen] {
+
+}
+
+/**
+ * ===========================
+ * Main Menu Styling
+ * ===========================
+**/
+
+/* Main Menu Styling */
+[data-screen="main"] {
+
+}
+
+/* Main Menu Buttons Styling */
+[data-screen="main"] button {
+
+}
+
+/**
+ * ===========================
+ * Save and Load Menus Styling
+ * ===========================
+**/
+
+/* Slots Style */
+[data-component="save-slot"] figure {
+
+}
+
+/* Slot's Image Style */
+[data-component="save-slot"] img {
+
+}
+
+/* Slots Title Style */
+[data-component="save-slot"] figcaption {
+
+}
+
+/* Slots Delete Button Style */
+[data-component="save-slot"] button {
+
+}
+
+/**
+ * ===========================
+ * Game Elements Styling
+ * ===========================
+**/
+
+/* Choice Buttons style */
+[data-component="choice-container"] button {
+
+}
+
+/* Choice Button Style on Hover */
+[data-component="choice-container"] button:hover {
+
+}
+
+/* Text Box styling */
+[data-component="text-box"] {
+
+}
+
+/* Character Name Style */
+[data-ui="who"] {
+
+}
+
+/* Style for Centered Text */
+[data-component="centered-dialog"] {
+
+}
+
+/* Character Images Styles */
+[data-screen="game"] [data-character] {
+
+}
+
+/* Other Images Styles */
+[data-screen="game"] [data-image] {
+
+}
+
+/**
+ * ===========================
+ * Quick Menu Styling
+ * ===========================
+**/
+
+/* These styles are applied to the Mobile version of the Quick Menu */
+
+/* Quick Menu Style */
+[data-component="quick-menu"] {
+
+}
+
+/* Quick Menu Buttons Style */
+[data-component="quick-menu"] span {
+
+}
+
+/* Quick Menu Buttons Style on Hover */
+[data-component="quick-menu"] span:hover {
+
+}
+
+/* Quick Menu Buttons Icon Style */
+[data-component="quick-menu"] > span > .fa {
+
+}
+
+/**
+ * ===========================
+ * Range Styling
+ * ===========================
+**/
+
+/* Use the background property to set a color for these */
+input[type=range]:focus::-webkit-slider-runnable-track {
+
+}
+
+input[type=range]::-webkit-slider-runnable-track {
+
+}
+
+input[type=range]:focus::-ms-fill-upper {
+
+}
+
+input[type=range]:focus::-ms-fill-lower {
+
+}
+
+input[type=range]::-moz-range-track {
+
+}
+
+input[type=range]::-ms-fill-lower {
+
+}
+
+input[type=range]::-ms-fill-upper {
+
+}
+
+/** Medium Screens, Phablets (601px) **/
+@media screen and (min-width: 37.56255em) {
+	/* Styles for the desktop version of the Quick Menu */
+
+	/* Quick Menu Style */
+	[data-component="quick-menu"] {
+
+	}
+
+	/* Quick Menu Buttons Style */
+	[data-component="quick-menu"] span {
+
+	}
+
+	/* Quick Menu Buttons Style on Hover */
+	[data-component="quick-menu"] span:hover {
+
+	}
+}
+
+/** Medium Devices, Tablets (992px)**/
+@media screen and (min-width: 62em) {
+
+}
+
+/** HD Screen, Large Devices, Wide Screens, Desktop (1200px) **/
+@media screen and (min-width: 75em) {
+
+}
+
+/** Full HD Screen, Large Devices, Wide Screens, Large Desktops (1920px) **/
+@media screen and (min-width: 120em) {
+
+}
+
+/** Retina Screen , Large Devices, Wide Screens(2560px) **/
+@media screen and (min-width: 160em) {
+
+}
+
+/** 4k Screens, Large Devices, Wide Screens (3840px) **/
+@media screen and (min-width: 240em) {
+
+}
+
+/** 5k Screens, Large Devices, Wide Screens (5000px) **/
+@media screen and (min-width: 312.5em) {
+
+}
+
+/** 8k Screens, Large Devices, Wide Screens (8000px) **/
+@media screen and (min-width: 500em) {
+
+}
+
+#ccl-battle-root {
+	position: fixed;
+	inset: 0;
+	z-index: 9999;
+	background: rgba(10, 14, 20, 0.84);
+	backdrop-filter: blur(10px);
+	color: #f8fafc;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.ccl-battle-prompt-choices {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 10px;
+	margin: 12px 0;
+}
+
+.ccl-deck-choice {
+	border: 1px solid rgba(37, 99, 235, 0.35);
+	transition: background 120ms ease, color 120ms ease, border-color 120ms ease;
+}
+
+.ccl-deck-choice.ccl-deck-choice-active {
+	background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+	border-color: #60a5fa;
+	color: #eff6ff;
+}
+
+.ccl-battle-shell {
+	display: grid;
+	grid-template-rows: auto auto 1fr auto;
+	gap: 16px;
+	height: 100%;
+	padding: 20px;
+	background:
+		radial-gradient(circle at top, rgba(96, 165, 250, 0.18), transparent 35%),
+		radial-gradient(circle at bottom, rgba(248, 113, 113, 0.14), transparent 40%),
+		linear-gradient(180deg, #101826 0%, #0b1220 100%);
+}
+
+.ccl-battle-topbar,
+.ccl-scoreboard,
+.ccl-player-controls,
+.ccl-board {
+	display: grid;
+	gap: 16px;
+}
+
+.ccl-battle-topbar {
+	grid-template-columns: 1fr auto;
+	align-items: center;
+}
+
+.ccl-battle-topbar h2 {
+	margin: 0;
+	font-size: 1.9rem;
+}
+
+.ccl-battle-kicker,
+.ccl-zone-label,
+.ccl-panel-title,
+.ccl-score-card span {
+	font-size: 0.8rem;
+	text-transform: uppercase;
+	letter-spacing: 0.12em;
+	color: #94a3b8;
+}
+
+.ccl-turn-pill,
+.ccl-score-card,
+.ccl-zone,
+.ccl-action-panel,
+.ccl-hand-panel,
+.ccl-main-controls,
+.ccl-bench-card,
+.ccl-zone-card,
+.ccl-result-card {
+	background: rgba(15, 23, 42, 0.88);
+	border: 1px solid rgba(148, 163, 184, 0.22);
+	border-radius: 18px;
+	box-shadow: 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.ccl-turn-pill,
+.ccl-score-card,
+.ccl-zone,
+.ccl-action-panel,
+.ccl-hand-panel,
+.ccl-main-controls {
+	padding: 16px;
+}
+
+.ccl-scoreboard {
+	grid-template-columns: repeat(2, minmax(0, 220px));
+}
+
+.ccl-score-card strong {
+	font-size: 1.5rem;
+}
+
+.ccl-board {
+	grid-template-columns: minmax(0, 1fr) 360px minmax(0, 1fr);
+	align-items: stretch;
+}
+
+.ccl-side {
+	display: grid;
+	grid-template-rows: auto auto;
+	gap: 16px;
+}
+
+.ccl-zone-card,
+.ccl-zone-empty,
+.ccl-bench-card,
+.ccl-log-entry,
+.ccl-inspector-card,
+.ccl-side-summary {
+	padding: 14px;
+}
+
+.ccl-status-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.ccl-status-chip,
+.ccl-prompt-banner {
+	border-radius: 999px;
+	padding: 6px 10px;
+	font-size: 0.78rem;
+	background: rgba(30, 41, 59, 0.92);
+	border: 1px solid rgba(148, 163, 184, 0.25);
+	color: #dbeafe;
+}
+
+.ccl-status-burn {
+	background: rgba(127, 29, 29, 0.9);
+	border-color: rgba(248, 113, 113, 0.45);
+}
+
+.ccl-status-stun {
+	background: rgba(49, 46, 129, 0.92);
+	border-color: rgba(129, 140, 248, 0.5);
+}
+
+.ccl-status-guarded {
+	background: rgba(20, 83, 45, 0.92);
+	border-color: rgba(74, 222, 128, 0.48);
+}
+
+.ccl-prompt-banner {
+	border-radius: 14px;
+	padding: 10px 12px;
+}
+
+.ccl-card-title-row,
+.ccl-hp-row,
+.ccl-energy-row,
+.ccl-counter-row,
+.ccl-flag-row {
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	gap: 12px;
+}
+
+.ccl-bench {
+	display: grid;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	gap: 12px;
+}
+
+.ccl-bench-card,
+.ccl-main-controls,
+.ccl-log,
+.ccl-hand,
+.ccl-inspector,
+.ccl-action-panel,
+.ccl-phase-summary {
+	display: grid;
+	gap: 10px;
+}
+
+.ccl-bench-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.ccl-log {
+	max-height: 260px;
+	overflow: auto;
+}
+
+.ccl-log-entry {
+	border-radius: 12px;
+	background: rgba(30, 41, 59, 0.9);
+}
+
+.ccl-inspector-card,
+.ccl-phase-summary,
+.ccl-side-summary {
+	border-radius: 14px;
+	background: rgba(30, 41, 59, 0.82);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.ccl-player-controls {
+	grid-template-columns: 1.3fr 1fr;
+}
+
+.ccl-energy-select {
+	display: grid;
+	gap: 8px;
+}
+
+.ccl-energy-select select {
+	border-radius: 12px;
+	border: 1px solid rgba(148, 163, 184, 0.22);
+	background: rgba(15, 23, 42, 0.92);
+	color: #eff6ff;
+	padding: 10px 12px;
+	font: inherit;
+}
+
+.ccl-hand {
+	grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+}
+
+.ccl-card-button,
+.ccl-main-controls button,
+.ccl-bench-actions button,
+.ccl-result-card button,
+.ccl-secondary-button {
+	border: 0;
+	border-radius: 14px;
+	padding: 12px 14px;
+	background: linear-gradient(180deg, #2563eb 0%, #1d4ed8 100%);
+	color: #eff6ff;
+	cursor: pointer;
+	font: inherit;
+	transition: transform 120ms ease, opacity 120ms ease;
+}
+
+.ccl-card-button {
+	display: grid;
+	gap: 6px;
+	text-align: left;
+	background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%);
+	border: 1px solid rgba(96, 165, 250, 0.25);
+}
+
+.ccl-card-button-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 8px;
+}
+
+.ccl-secondary-button {
+	background: rgba(51, 65, 85, 0.9);
+	border: 1px solid rgba(148, 163, 184, 0.24);
+}
+
+.ccl-main-controls button:disabled,
+.ccl-card-button:disabled,
+.ccl-bench-actions button:disabled {
+	opacity: 0.4;
+	cursor: not-allowed;
+	transform: none;
+}
+
+.ccl-main-controls button:not(:disabled):hover,
+.ccl-card-button:not(:disabled):hover,
+.ccl-bench-actions button:not(:disabled):hover,
+.ccl-result-card button:hover {
+	transform: translateY(-1px);
+}
+
+.ccl-end-turn {
+	background: linear-gradient(180deg, #475569 0%, #334155 100%);
+}
+
+.ccl-result-panel {
+	position: absolute;
+	inset: 0;
+	display: grid;
+	place-items: center;
+	background: rgba(2, 6, 23, 0.76);
+}
+
+.ccl-result-card {
+	width: min(520px, calc(100vw - 32px));
+	padding: 28px;
+	text-align: center;
+}
+
+.ccl-result-card h3 {
+	margin-top: 0;
+	font-size: 2rem;
+}
+
+.ccl-result-meta,
+.ccl-energy-display,
+.ccl-retreat-note,
+.ccl-empty-bench,
+.ccl-empty-hand,
+.ccl-zone-empty,
+.ccl-bench-card small,
+.ccl-phase-copy,
+.ccl-inspector-meta,
+.ccl-attack-chip small,
+.ccl-counter-pill span {
+	color: #cbd5e1;
+}
+
+.ccl-counter-pill,
+.ccl-attack-chip,
+.ccl-flag-row span {
+	border-radius: 999px;
+	padding: 8px 12px;
+	background: rgba(15, 23, 42, 0.82);
+	border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.ccl-counter-pill {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	flex: 1;
+}
+
+.ccl-counter-pill strong {
+	font-size: 1.1rem;
+}
+
+.ccl-flag-row {
+	flex-wrap: wrap;
+}
+
+.ccl-flag-row .is-complete {
+	border-color: rgba(74, 222, 128, 0.55);
+	color: #dcfce7;
+}
+
+.is-targetable {
+	border-color: rgba(250, 204, 21, 0.55);
+	box-shadow: 0 0 0 1px rgba(250, 204, 21, 0.35), 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.ccl-inspector-attacks {
+	display: grid;
+	gap: 8px;
+}
+
+.ccl-attack-chip {
+	display: grid;
+	gap: 4px;
+	border-radius: 16px;
+}
+
+.is-selected {
+	border-color: rgba(96, 165, 250, 0.78);
+	box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.48), 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+body.battle-open {
+	overflow: hidden;
+}
+
+@media screen and (max-width: 62em) {
+	.ccl-battle-shell {
+		overflow: auto;
+	}
+
+	.ccl-board,
+	.ccl-player-controls,
+	.ccl-scoreboard,
+	.ccl-bench,
+	.ccl-bench-actions {
+		grid-template-columns: 1fr;
+	}
+
+	.ccl-battle-topbar {
+		grid-template-columns: 1fr;
+	}
+}
