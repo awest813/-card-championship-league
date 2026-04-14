@@ -5,7 +5,7 @@
   "main": "engine/electron/index.js",
   "description": "A visual novel about climbing the Card Championship League through tournament card battles.",
   "author": "Allen",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "homepage": "https://example.com/card-championship-league",
   "build": {
     "appId": "com.example.cardchampionshipleague",

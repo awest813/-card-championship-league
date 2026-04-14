@@ -1,169 +1,175 @@
 # Card Championship League
 
-Card Championship League is a visual novel prototype built on Monogatari with a tournament-driven trading card battle loop. The goal is to blend character-focused VN storytelling with fast, readable matches inspired by the cadence of Pokemon TCG Pocket, while keeping the ruleset streamlined enough to fit naturally inside a narrative game.
+`Card Championship League` is a single-player card-battle RPG built with Monogatari and a custom JavaScript battle module. The game is set in `Harbor City`, where the player enters the `Harbor City Open`, learns under `Mira`, and collides early with `Rook`, the rising rival who turns every bracket run into a public story.
 
-## Current Project State
+The target product is a commercial, story-driven tournament card game with premium event presentation, fast readable battles, strong rivalry chemistry, and light-but-meaningful relationship systems.
 
-This repository is currently a clean Monogatari starter project with placeholder story content and mostly empty asset folders. That is a good starting point for this concept because the VN flow, saves, menus, Electron packaging, and asset structure are already in place.
+## Project Position
 
-What exists today:
+This repository is an active prototype moving toward a commercial vertical slice.
 
-- Monogatari web and Electron setup
-- Starter script, options, storage, and style files
-- Empty asset directories for scenes, characters, sounds, music, UI, and gallery items
-- Packaging scripts for local web preview and desktop builds
+What is already in the project:
 
-What does not exist yet:
+- Monogatari story shell and save flow
+- custom battle scene with active/bench board state
+- starter decks and early Harbor City battle content
+- support cards, statuses, AI, and battle result payloads
+- roadmap and Phase 0 tournament blueprint for production planning
 
-- Original setting, cast, and tournament story content
-- Battle UI and rules engine
-- Card data, decks, rewards, or progression systems
-- Final art, audio, or presentation polish
+What is still in progress:
 
-## Vision
+- Harbor City Open tournament presentation screens
+- bracket runtime and filler entrant generation
+- larger card pool and deckbuilding depth
+- relationship-reactive event text and route expansion
+- final art, audio, and commercial polish
 
-The game centers on a player entering a competitive card circuit where every duel has both narrative and strategic stakes. Story scenes build rivalries, friendships, sponsorship pressure, and tournament drama. Matches are short, high-information encounters that reward deck identity, tactical sequencing, and reading the opponent.
+## Product Direction
 
-Core fantasy:
+The game should feel like:
 
-- Live the rise of a rookie duelist through local qualifiers, regional cups, and championship brackets
-- Build relationships with rivals, teammates, and mentors through VN scenes
-- Collect cards, refine decks, and adapt to tournament metas
-- Make story choices that affect trust, routes, rewards, and available matchups
+- a premium single-player card RPG
+- a sports-anime event arc
+- a stylish city card-scene drama
+- a tournament-first progression game
 
-## Gameplay Pillars
+The player fantasy is:
 
-### 1. Visual Novel First
+- entering branded events
+- building and selecting decks
+- climbing the Harbor City circuit
+- earning attention from the scene
+- forming bonds and rivalries
+- carrying match outcomes back into story
 
-The story layer should do more than introduce battles. It should create tension before matches, deepen the cast between rounds, and make tournament results feel personal.
+## Core Architecture
 
-### 2. Fast Tactical Card Battles
+The project is built around three layers:
 
-Battles should feel snappy and spectator-friendly:
+### 1. Monogatari Layer
 
-- Small deck sizes
-- Short turns
-- Clear board states
-- Limited resource complexity
-- Strong card identity and matchup texture
+Owns:
 
-### 3. Tournament-Based Progression
+- story scenes
+- dialogue
+- registration and event scenes
+- relationship beats
+- pre-match banter
+- between-round lounge scenes
+- battle launch and battle return handling
 
-The primary game loop is:
+### 2. Custom Battle Module
 
-1. Story scene
-2. Deck edit and prep
-3. Match or multi-round tournament set
-4. Rewards, relationship shifts, and bracket advancement
-5. New story branch or event
+Owns:
 
-## Battle System Direction
+- duel board rendering
+- battle rules and phases
+- hand/deck/discard/active/bench state
+- supports and statuses
+- AI turns
+- win/loss resolution
+- structured battle result payloads
 
-This project should target a simplified digital-first card game model rather than a full tabletop simulation.
+### 3. Shared Progression State
 
-Suggested rules direction:
+Owns:
 
-- Two active creatures or one active plus one bench slot, depending on UI tests
-- Energy/resources generated automatically each turn instead of manually attached from hand
-- Small opening hands and aggressive mulligan simplification
-- Matches decided by prize points, knockout count, or best-of-one tournament rules
-- Distinct card types: units, support cards, tactics, and passive gear
-- Status and combo language kept intentionally compact
+- selected deck
+- rewards and unlocks
+- story flags
+- tournament progress
+- relationship values
+- tournament history
 
-Desired feel:
+## Current Battle Baseline
 
-- Easier to learn than a full TCG
-- Enough interaction to support deck archetypes and counterplay
-- Fast enough to fit naturally between VN scenes
+The live prototype battle format currently supports:
 
-## Narrative Structure
+- 20-card decks
+- opening hand of 5
+- 1 active battler
+- up to 3 benched battlers
+- 1 draw per turn
+- 1 energy attachment per turn
+- optional retreat once per turn
+- 1 attack per turn, ending the turn
+- KO scoring to 3 points
+- immediate loss if a side cannot replace a KO'd active
 
-The story can be built around a season format:
+Current v3 battle features include:
 
-- Prologue: learn the scene, meet the core cast, enter the circuit
-- Local Arc: first rivalries, first deck identity, first elimination pressure
-- Regional Arc: stronger opponents, team politics, deck evolution
-- National Arc: scouting, media attention, personal route lock-ins
-- Finals Arc: route climax and championship bracket
+- support cards
+- status effects: `Burn`, `Stun`, `Guarded`
+- hook-based effect resolution
+- inspector panel
+- scored enemy AI
+- structured result payloads for story and tournament flow
 
-Character routes can influence:
+## Harbor City Open
 
-- Exclusive support cards
-- Practice partners and test matches
-- Branching event scenes
-- Different final opponents or endings
+The opening premium event is the `Harbor City Open`.
 
-## Technical Direction
+Its job in the final product is to prove that the game cares about tournament presentation, not just battle sequencing. The Harbor City Open should deliver:
 
-Monogatari should handle:
+- event identity
+- registration and deck confirmation
+- bracket reveal
+- at least three rounds of event structure
+- Mira support beats
+- visible Rook pressure across the bracket
+- a clean result handoff back into story
 
-- Narrative scripting
-- Menus and save/load flow
-- Character presentation
-- Scene transitions
-- Global game state and route flags
+The repo now includes a dedicated Phase 0 blueprint for tournament mode:
 
-Custom JavaScript should handle:
+- [TOURNAMENT_PHASE0_BLUEPRINT.md](/C:/Users/allen/Downloads/monogatari-v2.6.0/TOURNAMENT_PHASE0_BLUEPRINT.md)
 
-- Card database loading
-- Deck validation
-- Match state
-- Turn flow
-- AI decision logic
-- Reward generation
-- Tournament bracket tracking
+And the higher-level production plan remains in:
 
-Recommended data model:
+- [ROADMAP.md](/C:/Users/allen/Downloads/monogatari-v2.6.0/ROADMAP.md)
 
-- `js/script.js`: story scenes, branching labels, tutorial scripting
-- `js/main.js`: custom bootstrapping and battle system registration
-- `js/storage.js`: persistent player profile, deck inventory, tournament progress
-- `assets/`: card art, UI, audio, character sprites, scenes
-- future `data/` or `js/data/`: cards, opponents, tournaments, rewards
+## Repository Layout
 
-## MVP Scope
+Key files and folders:
 
-The first playable milestone should stay narrow.
+- `js/script.js`: Monogatari story content
+- `js/main.js`: battle/story bridge and runtime bootstrapping
+- `js/storage.js`: default save shape
+- `js/data/`: battle data, decks, statuses, rivals
+- `js/battle/`: hook, AI, and battle-result helpers
+- `js/story/`: launch and result bridge helpers
+- `js/shared/`: progression state
+- `js/systems/battle-system.js`: current standalone battle scene implementation
+- `style/main.css`: VN and battle scene presentation
 
-Target MVP:
+## Development Priorities
 
-- 20 to 40 cards
-- 3 starter decks
-- 3 to 5 AI opponents
-- 1 short tournament arc
-- 1 tutorial match
-- 1 deck edit screen
-- 1 reward loop between rounds
+Near-term priorities:
 
-If the MVP feels good, expansion can add more routes, mechanics, archetypes, and seasonal tournament content.
+1. build the Harbor City Open event screens
+2. add bracket runtime state and reveal flow
+3. expand event text packs for Mira, Rook, and crowd buzz
+4. add authored + filler entrant support
+5. continue tightening battle readability and tournament handoff
 
-## Immediate Next Steps
+## Running the Project
 
-1. Define the first card ruleset on paper before building UI
-2. Implement battle state and a minimal Round One test match in JavaScript
-3. Build the first battle screen for the Harbor City Open feature table
-4. Add a simple win/loss branch after the Rook match
-5. Start the first reward and deck-adjustment loop between rounds
-
-## Running The Project
-
-Install dependencies and launch the local preview:
+Install dependencies and run the local web build:
 
 ```powershell
 yarn install
 yarn serve
 ```
 
-For the Electron desktop build during development:
+Run the Electron build in development:
 
 ```powershell
 yarn start
 ```
 
-## Project Notes
+## License
 
-- Project metadata now uses the working title `Card Championship League`
-- The VN script now covers tournament registration, mentor/rival setup, and the Round One feature match lead-in
-- Asset folders are prepared but mostly empty, so the next major gains come from writing content and defining systems
+This repository is currently intended for a commercial product and is not open source.
 
-This repo is in a strong prototype phase: the shell exists, and the design challenge now is turning it into a compelling card-battle VN with a clear production plan.
+See:
+
+- [LICENSE](/C:/Users/allen/Downloads/monogatari-v2.6.0/LICENSE)
