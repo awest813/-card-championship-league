@@ -134,8 +134,9 @@ window.startHarborCityRookBattle = function () {
 };
 
 document.addEventListener ('click', (event) => {
-	const deckButton = event.target.closest ('[data-ccl-select-deck]');
-	const battleButton = event.target.closest ('[data-ccl-start-battle]');
+	const deckButton       = event.target.closest ('[data-ccl-select-deck]');
+	const battleButton     = event.target.closest ('[data-ccl-start-battle]');
+	const tournamentButton = event.target.closest ('[data-ccl-t-start-event]');
 
 	if (deckButton) {
 		event.preventDefault ();
@@ -145,6 +146,14 @@ document.addEventListener ('click', (event) => {
 	if (battleButton) {
 		event.preventDefault ();
 		window.startHarborCityRookBattle ();
+	}
+
+	if (tournamentButton) {
+		event.preventDefault ();
+		tournamentButton.disabled = true;
+		tournamentButton.textContent = 'Loading…';
+		const eventId = tournamentButton.getAttribute ('data-ccl-t-start-event');
+		window.CCLTournamentEngine.runEvent (eventId);
 	}
 });
 
