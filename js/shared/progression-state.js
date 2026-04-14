@@ -36,7 +36,15 @@
 		affinity: {
 			mira: 0,
 			rook: 0
-		}
+		},
+		// Task Group E — Tournament relationship variables (blueprint §6.1)
+		relationship: {
+			miraTrust:     0,
+			rookHeat:      0,
+			tournamentRep: 0,
+			crowdFavor:    0
+		},
+		tournamentHistory: []
 	};
 	let cachedState = clone (DEFAULT_STATE);
 
@@ -159,11 +167,28 @@
 		});
 	}
 
+	// Task Group E — Apply incremental changes to relationship variables, clamped to [0, 100].
+	// patch: { miraTrust?: number, rookHeat?: number, tournamentRep?: number, crowdFavor?: number }
+	function applyRelationshipPatch (patch) {
+		const current    = getState ();
+		const currentRel = current.relationship || {};
+		const nextRel    = {};
+
+		Object.keys (patch || {}).forEach (function (key) {
+			const prev    = typeof currentRel[key] === 'number' ? currentRel[key] : 0;
+			const delta   = typeof patch[key] === 'number' ? patch[key] : 0;
+			nextRel[key]  = Math.max (0, Math.min (100, prev + delta));
+		});
+
+		return mergeIntoCurrent ({ relationship: nextRel });
+	}
+
 	window.CCLProgressionState = {
 		clone,
 		getState,
 		getSelectedDeckId,
 		setSelectedDeckId,
-		applyBattleResult
+		applyBattleResult,
+		applyRelationshipPatch
 	};
 })();

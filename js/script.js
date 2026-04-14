@@ -11,19 +11,13 @@ monogatari.action ('message').messages ({
 			<p>This project uses Monogatari for story flow and will layer custom JavaScript battle systems on top.</p>
 		`
 	},
-	'RoundOneBattlePrompt': {
-		title: 'Round One Feature Match',
-		subtitle: 'Table Seven',
+	'HarborCityOpenEntry': {
+		title: 'Harbor City Open',
+		subtitle: 'Tournament Mode',
 		body: `
-			<p>Rook is across the table, the stream banner is live, and your opening hand is ready.</p>
-			<p>This duel uses the new battle module: 20-card battler decks, one active, up to three benched battlers, one energy attach per turn, and first to 3 points wins.</p>
-			<div class="ccl-battle-prompt-choices">
-				<button class="button ccl-deck-choice" data-ccl-deck-id="starter_blaze" data-ccl-select-deck="starter_blaze">Starter Blaze</button>
-				<button class="button ccl-deck-choice" data-ccl-deck-id="starter_tide" data-ccl-select-deck="starter_tide">Starter Tide</button>
-			</div>
-			<p id="ccl-selected-deck-status">Selected deck: Starter Blaze</p>
-			<p><button class="button" data-ccl-start-battle="harbor_city_rook">Start Battle</button></p>
-			<p id="ccl-battle-launch-status">Battle not started yet.</p>
+			<p>The pairings are sealed. The bracket is live. Everything from registration leads here.</p>
+			<p>This is a full tournament run: three rounds, single elimination, Rook waiting in the finals.</p>
+			<p><button class="button" data-ccl-t-start-event="harbor_city_open">Enter the Harbor City Open</button></p>
 		`
 	}
 });
@@ -239,7 +233,7 @@ monogatari.script ({
 		'c This is exactly the kind of pairing the Harbor City Open loves.',
 		'm Remember the plan: establish pressure early, keep your resources clean, and make him answer you.',
 		'You cut decks. Present hands. Wait for the judge signal.',
-		'show message RoundOneBattlePrompt',
+		'show message HarborCityOpenEntry',
 		'end'
 	],
 

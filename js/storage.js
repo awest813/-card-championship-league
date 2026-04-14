@@ -36,5 +36,13 @@ monogatari.storage ({
 	affinity: {
 		mira: 0,
 		rook: 0
-	}
+	},
+	// Task Group E — Tournament relationship variables (§6.1)
+	relationship: {
+		miraTrust:    0,   // 0-100: Mira's confidence in the player's judgment and resilience
+		rookHeat:     0,   // 0-100: rivalry intensity, fixation, bracket-centered emotional pressure
+		tournamentRep: 0,  // 0-100: how seriously the Harbor City scene takes the player
+		crowdFavor:   0    // 0-100: public warmth, spotlight appeal, audience momentum
+	},
+	tournamentHistory: []
 });
