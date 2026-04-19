@@ -19,17 +19,23 @@
 
 /* General Style */
 body {
-
+	margin: 0;
+	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
 }
 
 /* Simple Button styles*/
 button {
-
+	border: 0;
+	background: none;
+	cursor: pointer;
+	font: inherit;
 }
 
 /* Simple Button Style on Hover */
 button:hover {
-
+	opacity: 0.9;
 }
 
 /* General Styling for Menu Screens */
@@ -608,6 +614,70 @@ body.battle-open {
 	overflow: hidden;
 }
 
+/* ── Battle System Polish ──────────────────────────────────────────────────── */
+
+/* HP bar — shown beneath HP fraction in active zone, bench, and inspector */
+.ccl-hp-bar {
+	height: 5px;
+	background: rgba(148, 163, 184, 0.18);
+	border-radius: 3px;
+	overflow: hidden;
+	margin: 4px 0;
+}
+
+.ccl-hp-bar-fill {
+	height: 100%;
+	width: var(--hp-pct, 100%);
+	background: #4ade80;
+	border-radius: 3px;
+	transition: width 400ms ease;
+}
+
+.ccl-hp-bar[data-hp="low"] .ccl-hp-bar-fill {
+	background: #fb923c;
+}
+
+.ccl-hp-bar[data-hp="critical"] .ccl-hp-bar-fill {
+	background: #f87171;
+}
+
+/* Score card inner layout */
+.ccl-score-card {
+	display: flex;
+	flex-direction: column;
+	gap: 4px;
+}
+
+/* Empty-state slots need breathing room */
+.ccl-empty-bench,
+.ccl-empty-hand {
+	padding: 14px;
+	text-align: center;
+	font-size: 0.88rem;
+}
+
+/* Deck-choice hover lift (complements active/transition already defined) */
+.ccl-deck-choice:not(:disabled):hover {
+	transform: translateY(-1px);
+	background: rgba(37, 99, 235, 0.12);
+}
+
+/* Keyboard focus outlines — battle UI */
+.ccl-card-button:focus-visible,
+.ccl-main-controls button:focus-visible,
+.ccl-bench-actions button:focus-visible,
+.ccl-result-card button:focus-visible,
+.ccl-secondary-button:focus-visible,
+.ccl-deck-choice:focus-visible {
+	outline: 2px solid #60a5fa;
+	outline-offset: 2px;
+}
+
+.ccl-energy-select select:focus-visible {
+	outline: 2px solid #60a5fa;
+	outline-offset: 2px;
+}
+
 /* =============================================================================
    Tournament Mode Screens — Phase 0
    Design: bright, premium, readable, sporty. Harbor City Open color palette:
@@ -1174,6 +1244,13 @@ body.tournament-open {
 
 .ccl-t-result-inner .ccl-t-line-block {
 	text-align: left;
+}
+
+/* ── Tournament focus styles ──────────────────────────────────────────────────── */
+
+.ccl-t-cta:focus-visible {
+	outline: 2px solid #c9910a;
+	outline-offset: 2px;
 }
 
 /* ── Responsive: narrow viewports ────────────────────────────────────────────── */
