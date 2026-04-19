@@ -1152,7 +1152,7 @@
 						<strong>${escapeHtml (currentPlayerLabel)}</strong>
 						<span class="ccl-counter-pill"><span>Phase</span><strong>${this.state.phase.toUpperCase ()}</strong></span>
 					</div>
-					<p class="ccl-phase-copy">Turn ${this.state.turn}. Supports, statuses, retreat, and attack legality are all surfaced here instead of hidden in story logic.</p>
+					<p class="ccl-phase-copy">Turn ${this.state.turn}. Attach energy, play a support, retreat if needed, then attack and end your turn.</p>
 					<div class="ccl-flag-row">
 						${flagChip ('Attach Used', player.turnFlags.energyAttached)}
 						${flagChip ('Support Used', player.turnFlags.supportPlayed)}
@@ -1193,6 +1193,7 @@
 							<span>HP</span>
 							<strong>${battler.currentHp}/${definition.hp}</strong>
 						</div>
+						<div class="ccl-hp-bar" data-hp="${battler.currentHp <= definition.hp * 0.25 ? 'critical' : battler.currentHp <= definition.hp * 0.5 ? 'low' : 'ok'}" style="--hp-pct: ${Math.round (battler.currentHp / definition.hp * 100)}%"><div class="ccl-hp-bar-fill"></div></div>
 						<div class="ccl-energy-row">
 							<span>Energy</span>
 							<strong>${escapeHtml (formatEnergy (battler.attachedEnergy))}</strong>
@@ -1222,6 +1223,7 @@
 						<strong>${escapeHtml (definition.name)}</strong>
 						<span>${battler.currentHp}/${definition.hp} HP</span>
 					</div>
+					<div class="ccl-hp-bar" data-hp="${battler.currentHp <= definition.hp * 0.25 ? 'critical' : battler.currentHp <= definition.hp * 0.5 ? 'low' : 'ok'}" style="--hp-pct: ${Math.round (battler.currentHp / definition.hp * 100)}%"><div class="ccl-hp-bar-fill"></div></div>
 					<small>${escapeHtml (formatEnergy (battler.attachedEnergy))}</small>
 					${this.renderStatusChips (battler)}
 					<div class="ccl-bench-actions">
@@ -1281,6 +1283,7 @@
 							<span>HP</span>
 							<strong>${battler.currentHp}/${card.hp}</strong>
 						</div>
+						<div class="ccl-hp-bar" data-hp="${battler.currentHp <= card.hp * 0.25 ? 'critical' : battler.currentHp <= card.hp * 0.5 ? 'low' : 'ok'}" style="--hp-pct: ${Math.round (battler.currentHp / card.hp * 100)}%"><div class="ccl-hp-bar-fill"></div></div>
 						<div class="ccl-energy-row">
 							<span>Attached</span>
 							<strong>${escapeHtml (formatEnergy (battler.attachedEnergy))}</strong>
@@ -1341,7 +1344,6 @@
 						<h3>${this.state.winner === 'player' ? 'Victory' : 'Defeat'}</h3>
 						<p class="ccl-result-meta">Score ${this.lastResult.score.playerPoints} - ${this.lastResult.score.enemyPoints}</p>
 						<p class="ccl-result-meta">Rewards: ${this.lastResult.rewards.credits} credits${this.lastResult.rewards.cards.length ? `, ${this.lastResult.rewards.cards.length} card unlock` : ''}${this.lastResult.rewards.packs.length ? `, ${this.lastResult.rewards.packs.length} pack` : ''}.</p>
-						<p class="ccl-result-meta">Next scene: ${escapeHtml (this.lastResult.nextScene || 'none')}</p>
 						<button type="button" data-action="close-result">Continue</button>
 					</div>
 				</div>
