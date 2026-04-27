@@ -17,30 +17,136 @@
  * ===========================
 **/
 
-/* General Style */
+/* ── Core Base ── */
 body {
 	margin: 0;
-	font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+	font-family: 'Inter', system-ui, -apple-system, sans-serif;
 	-webkit-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	background: #f8fafc;
+	color: #0f172a;
 }
 
-/* Simple Button styles*/
-button {
-	border: 0;
-	background: none;
-	cursor: pointer;
-	font: inherit;
+/* ── Card Component System ── */
+.ccl-zone-card, .ccl-bench-card {
+	background: #ffffff;
+	border: 1px solid #e2e8f0;
+	border-radius: 12px;
+	padding: 12px;
+	box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+	transition: transform 0.2s ease, box-shadow 0.2s ease;
+	position: relative;
+	overflow: hidden;
+	display: flex;
+	flex-direction: column;
+	gap: 8px;
+	min-height: 200px;
 }
 
-/* Simple Button Style on Hover */
-button:hover {
-	opacity: 0.9;
+.ccl-zone-card:hover, .ccl-bench-card:hover {
+	transform: translateY(-2px);
+	box-shadow: 0 8px 25px rgba(0,0,0,0.12);
 }
 
-/* General Styling for Menu Screens */
-[data-screen] {
+.ccl-card-art {
+	width: 100%;
+	height: 80px;
+	border-radius: 6px;
+	margin-bottom: 4px;
+	background: #f1f5f9;
+	position: relative;
+	overflow: hidden;
+}
 
+/* Element Themes */
+[data-element="fire"] .ccl-card-art { background: linear-gradient(135deg, #f87171, #991b1b); }
+[data-element="water"] .ccl-card-art { background: linear-gradient(135deg, #60a5fa, #1e3a8a); }
+[data-element="electric"] .ccl-card-art { background: linear-gradient(135deg, #fbbf24, #92400e); }
+[data-element="wind"] .ccl-card-art { background: linear-gradient(135deg, #34d399, #065f46); }
+[data-element="metal"] .ccl-card-art { background: linear-gradient(135deg, #94a3b8, #334155); }
+
+/* Card Elements */
+.ccl-card-title-row strong {
+	font-size: 0.95rem;
+	color: #1e293b;
+	white-space: nowrap;
+	overflow: hidden;
+	text-overflow: ellipsis;
+}
+
+.ccl-element-pill {
+	font-size: 0.7rem;
+	font-weight: 800;
+	text-transform: uppercase;
+	padding: 2px 8px;
+	border-radius: 999px;
+	color: #fff;
+	background: #64748b;
+}
+
+[data-element="fire"] .ccl-element-pill { background: #ef4444; }
+[data-element="water"] .ccl-element-pill { background: #3b82f6; }
+[data-element="electric"] .ccl-element-pill { background: #eab308; }
+[data-element="wind"] .ccl-element-pill { background: #10b981; }
+[data-element="metal"] .ccl-element-pill { background: #64748b; }
+
+.ccl-hp-row {
+	display: flex;
+	justify-content: space-between;
+	font-size: 0.8rem;
+	font-weight: 600;
+	color: #64748b;
+}
+
+.ccl-hp-bar {
+	height: 6px;
+	background: #e2e8f0;
+	border-radius: 3px;
+	overflow: hidden;
+	position: relative;
+}
+
+.ccl-hp-bar-fill {
+	position: absolute;
+	left: 0;
+	top: 0;
+	height: 100%;
+	width: var(--hp-pct);
+	background: #22c55e;
+	transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.ccl-hp-bar[data-hp="low"] .ccl-hp-bar-fill { background: #f59e0b; }
+.ccl-hp-bar[data-hp="critical"] .ccl-hp-bar-fill { background: #ef4444; }
+
+.ccl-energy-row {
+	display: flex;
+	align-items: center;
+	gap: 4px;
+	font-size: 0.75rem;
+	color: #475569;
+}
+
+.ccl-energy-dot {
+	width: 10px;
+	height: 10px;
+	border-radius: 50%;
+	background: #cbd5e1;
+}
+
+.ccl-status-row {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+	margin-top: 4px;
+}
+
+.ccl-status-chip {
+	font-size: 0.65rem;
+	font-weight: 700;
+	padding: 2px 6px;
+	border-radius: 4px;
+	background: #f1f5f9;
+	color: #475569;
 }
 
 /**
@@ -398,6 +504,27 @@ input[type=range]::-ms-fill-upper {
 .ccl-prompt-banner {
 	border-radius: 14px;
 	padding: 10px 12px;
+	font-weight: 600;
+	text-align: center;
+}
+
+.ccl-prompt-banner--urgent {
+	background: rgba(220, 38, 38, 0.9);
+	border-color: #f87171;
+	color: #fff;
+	animation: pulse-border 2s infinite;
+}
+
+.ccl-prompt-banner--action {
+	background: rgba(37, 99, 235, 0.9);
+	border-color: #60a5fa;
+	color: #fff;
+}
+
+@keyframes pulse-border {
+	0% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.4); }
+	70% { box-shadow: 0 0 0 10px rgba(220, 38, 38, 0); }
+	100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0); }
 }
 
 .ccl-card-title-row,
@@ -608,6 +735,41 @@ input[type=range]::-ms-fill-upper {
 .is-selected {
 	border-color: rgba(96, 165, 250, 0.78);
 	box-shadow: 0 0 0 1px rgba(96, 165, 250, 0.48), 0 16px 40px rgba(0, 0, 0, 0.28);
+}
+
+.ccl-hp-bar {
+	height: 8px;
+	background: rgba(15, 23, 42, 0.9);
+	border-radius: 4px;
+	overflow: hidden;
+	border: 1px solid rgba(148, 163, 184, 0.2);
+	margin: 8px 0;
+}
+
+.ccl-hp-bar--mini {
+	height: 6px;
+	margin: 4px 0 8px;
+}
+
+.ccl-hp-bar-fill {
+	height: 100%;
+	width: var(--hp-pct, 100%);
+	transition: width 300ms cubic-bezier(0.4, 0, 0.2, 1), background-color 300ms ease;
+}
+
+.ccl-hp-bar[data-hp="ok"] .ccl-hp-bar-fill {
+	background: linear-gradient(90deg, #22c55e, #4ade80);
+	box-shadow: 0 0 8px rgba(34, 197, 94, 0.4);
+}
+
+.ccl-hp-bar[data-hp="low"] .ccl-hp-bar-fill {
+	background: linear-gradient(90deg, #eab308, #fde047);
+	box-shadow: 0 0 8px rgba(234, 179, 8, 0.4);
+}
+
+.ccl-hp-bar[data-hp="critical"] .ccl-hp-bar-fill {
+	background: linear-gradient(90deg, #ef4444, #f87171);
+	box-shadow: 0 0 8px rgba(239, 68, 68, 0.4);
 }
 
 body.battle-open {
@@ -1077,17 +1239,10 @@ body.tournament-open {
 	border-color: #93c5fd;
 }
 
-.ccl-t-vs-card--opponent {
-	background: #fafaf9;
-	text-align: left;
-}
-
-.ccl-t-portrait {
-	width: 56px;
-	height: 56px;
+.ccl-portrait {
+	width: 120px;
+	height: 120px;
 	border-radius: 50%;
-	font-size: 1.6rem;
-	font-weight: 900;
 	display: flex;
 	align-items: center;
 	justify-content: center;
@@ -1302,4 +1457,49 @@ body.tournament-open {
 	.ccl-battle-topbar {
 		grid-template-columns: 1fr;
 	}
+}
+
+/* ── Generative Filler Portraits ── */
+.ccl-t-portrait--filler_a { background: linear-gradient(135deg, #0ea5e9, #0369a1) !important; }
+.ccl-t-portrait--filler_b { background: linear-gradient(135deg, #10b981, #047857) !important; }
+.ccl-t-portrait--filler_c { background: linear-gradient(135deg, #8b5cf6, #5b21b6) !important; }
+.ccl-t-portrait--filler_d { background: linear-gradient(135deg, #f59e0b, #b45309) !important; }
+.ccl-t-portrait--filler_e { background: linear-gradient(135deg, #ec4899, #9d174d) !important; }
+.ccl-t-portrait--filler_f { background: linear-gradient(135deg, #6366f1, #3730a3) !important; }
+
+/* ── Match Card Button Layouts ── */
+.ccl-t-button-row {
+	display: flex;
+	gap: 12px;
+	justify-content: center;
+	margin-top: 24px;
+}
+
+.ccl-t-cta--secondary {
+	background: #fff;
+	color: #1e3a5f;
+	border: 2px solid #e2e8f0;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+}
+
+.ccl-t-cta--secondary:hover:not(:disabled) {
+	background: #f8fafc;
+	border-color: #cbd5e1;
+	transform: translateY(-1px);
+}
+
+/* ── Combat Feedback ── */
+.ccl-is-flashing {
+	animation: rapid-shake 0.3s cubic-bezier(.36,.07,.19,.97) both;
+	box-shadow: 0 0 15px #ef4444 !important;
+	filter: brightness(1.2) contrast(1.2);
+	position: relative;
+	z-index: 10;
+}
+
+@keyframes rapid-shake {
+	10%, 90% { transform: translate3d(-1px, 0, 0); }
+	20%, 80% { transform: translate3d(2px, 0, 0); }
+	30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+	40%, 60% { transform: translate3d(4px, 0, 0); }
 }

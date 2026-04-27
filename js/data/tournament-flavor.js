@@ -12,7 +12,10 @@
 				{ text: 'You registered clean. That is the first win.', conditions: {} },
 				{ text: 'Starter decks have surprised stronger fields than this one.', conditions: {} },
 				{ text: 'The bracket does not know you yet. That is an advantage.', conditions: {} },
-				{ text: 'Format is straightforward. Three rounds, single elim. Win the first one and everything opens up.', conditions: {} }
+				{ text: 'Format is straightforward. Three rounds, single elim. Win the first one and everything opens up.', conditions: {} },
+				{ text: 'You carry yourself differently today. Lean into that confidence.', conditions: { miraTrustMin: 15 } },
+				{ text: 'I saw you practicing late. It shows in your draw posture.', conditions: { miraTrustMin: 10 } },
+				{ text: 'The harbor air is good for the nerves. Keep your breathing steady.', conditions: {} }
 			],
 			bracket_reveal: [
 				{ text: 'Rook is seeded for a reason. But seeds get upset.', conditions: {} },
@@ -36,7 +39,10 @@
 				{ text: 'That was clean. Keep the same focus going into the next.', conditions: {} },
 				{ text: 'The field noticed. Do not let that change how you play.', conditions: {} },
 				{ text: 'You are through. Now we watch the bracket resolve.', conditions: {} },
-				{ text: 'One round down. Stay grounded. Do not start playing to the crowd yet.', conditions: {} }
+				{ text: 'One round down. Stay grounded. Do not start playing to the crowd yet.', conditions: {} },
+				{ text: 'The crowd is starting to lean in when you play. Handle that pressure.', conditions: { crowdFavorMin: 10 } },
+				{ text: 'Three rounds is a sprint. You just finished the first hundred meters.', conditions: {} },
+				{ text: 'You are reading the board faster than last time. Good.', conditions: { miraTrustMin: 20 } }
 			],
 			post_rook_win: [
 				{ text: 'You kept the pressure clean and forced him to answer your pace. That was not luck.', conditions: {} },
@@ -52,7 +58,9 @@
 			pre_event: [
 				{ text: 'Hoping you survive long enough to matter.', conditions: {} },
 				{ text: 'The bracket does not care how prepared you think you are.', conditions: {} },
-				{ text: 'See you in the finals. If you make it.', conditions: {} }
+				{ text: 'See you in the finals. If you make it.', conditions: {} },
+				{ text: 'I heard you were making noise in the practice lobby. Let\'s see it on the clock.', conditions: { tournamentRepMin: 10 } },
+				{ text: 'Try not to choke when the lights go up. It ruins the aesthetic.', conditions: { rookHeatMin: 10 } }
 			],
 			bracket_reveal: [
 				{ text: 'Your side of the bracket is weak. Mine is not.', conditions: {} },
@@ -67,7 +75,9 @@
 			],
 			post_win: [
 				{ text: 'Good. That is the first real match I have had all month.', conditions: {} },
-				{ text: 'Hah. Next time I come prepared.', conditions: {} }
+				{ text: 'Hah. Next time I come prepared.', conditions: {} },
+				{ text: 'Enjoy the trophy. You earned the target on your back.', conditions: { rookHeatMin: 15 } },
+				{ text: 'You actually took a set. I might have to stop calling you a rookie.', conditions: { tournamentRepMin: 20 } }
 			],
 			post_loss: [
 				{ text: 'Better than I expected. Next time I come prepared.', conditions: {} },
@@ -99,7 +109,15 @@
 				'Pairings are locked. The bracket does not lie.',
 				'Let\'s see who drew the difficult side of the board.',
 				'Bracket is live. Watch that bottom half — that is where the seed sits.',
-				'We have a seeded favorite and a field of eight ready to prove the bracket wrong.'
+				'We have a seeded favorite and a field of eight ready to prove the bracket wrong.',
+				'Early upset alerts are pinging in the chat. The fans want blood.'
+			],
+			lounge_filler: [
+				'The lounge is buzzing. Everyone is checking the bracket updates.',
+				'Players are swapping notes, but the real strategy stays in the deck boxes.',
+				'The air in the lounge is thick with relief and nerves.',
+				'Scouts are already moving between the tables. No one is safe from the analysis.',
+				'A few early losses are already packing up. The Harbor City Open is ruthless.'
 			],
 			featured_match: [
 				'We have a featured table in Rookie Division: top seed Rook versus new entrant {{player.name}}.',
@@ -145,12 +163,33 @@
 		return pool[Math.floor (Math.random () * pool.length)];
 	}
 
-	function pickLine (category, subcategory) {
+	function pickLine (category, subcategory, context = {}) {
 		const cat = lines[category];
 		if (!cat) { return ''; }
+
 		const pool = subcategory ? cat[subcategory] : cat;
-		if (!Array.isArray (pool)) { return pickLine (category, Object.keys (pool)[0]); }
-		const item = pickRandom (pool);
+		if (!Array.isArray (pool)) { return ''; }
+
+		// Filter the pool based on the provided context
+		const filtered = pool.filter (function (item) {
+			if (typeof item === 'string') { return true; }
+			const cond = item.conditions || {};
+
+			// Relationship variables
+			if (cond.miraTrustMin !== undefined && (context.miraTrust || 0) < cond.miraTrustMin) { return false; }
+			if (cond.rookHeatMin !== undefined && (context.rookHeat || 0) < cond.rookHeatMin) { return false; }
+			if (cond.tournamentRepMin !== undefined && (context.tournamentRep || 0) < cond.tournamentRepMin) { return false; }
+			if (cond.crowdFavorMin !== undefined && (context.crowdFavor || 0) < cond.crowdFavorMin) { return false; }
+
+			// Event flags
+			if (cond.featuredMatch !== undefined && !!context.featuredMatch !== !!cond.featuredMatch) { return false; }
+
+			return true;
+		});
+
+		// Fallback to the full pool if filtering leaves us empty (to avoid dead text)
+		const finalPool = filtered.length ? filtered : pool;
+		const item = pickRandom (finalPool);
 		return item ? (typeof item === 'string' ? item : item.text) : '';
 	}
 

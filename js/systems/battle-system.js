@@ -207,9 +207,15 @@
 		}
 
 		draw (side, count) {
-			for (let draws = 0; draws < count && side.deck.length > 0; draws++) {
+			let success = true;
+			for (let draws = 0; draws < count; draws++) {
+				if (side.deck.length === 0) {
+					success = false;
+					break;
+				}
 				side.hand.push (side.deck.shift ());
 			}
+			return success;
 		}
 
 		pushLogLine (line) {
@@ -360,7 +366,12 @@
 			window.CCLBattleHooks.run (this, 'onTurnStart', { sideId });
 
 			if (!skipDraw) {
-				this.draw (side, 1);
+				const success = this.draw (side, 1);
+				if (!success) {
+					this.pushLogLine (`${side.name} has no cards left to draw!`);
+					this.finish (this.opponentId (sideId));
+					return;
+				}
 				this.pushLogLine (`${side.name} draws a card.`);
 				window.CCLBattleHooks.run (this, 'onDrawStep', { sideId });
 			}
@@ -543,7 +554,14 @@
 			const dealtDamage = Math.max (0, baseDamage - prevented);
 			defender.active.currentHp = Math.max (0, defender.active.currentHp - dealtDamage);
 			attacker.active.buffs = attacker.active.buffs.filter ((buff) => buff.expires !== 'turn_end');
-			this.pushLogLine (`${attacker.name} uses ${attack.name} for ${dealtDamage} damage${prevented ? ` (${prevented} blocked)` : ''}.`);
+
+			// Polish: Add damage flash class (requires CSS)
+			defender.active.isFlashing = true;
+			setTimeout (() => {
+				if (defender.active) { defender.active.isFlashing = false; this.render (); }
+			}, 400);
+
+			this.pushLogLine (`${attacker.name} uses ${attack.name} for ${dealtDamage} damage${prevented ? ` (${prevented} blocked by Guard)` : ''}.`);
 			window.CCLBattleHooks.run (this, 'onDamageDealt', {
 				attackerId,
 				defenderId: this.opponentId (attackerId),
@@ -938,35 +956,81 @@
 					}
 
 					if (support.effect.kind === 'draw') {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: null, score: 35, reason: 'Refill hand' });
-					}
-
-					if (support.effect.kind === 'status' && support.effect.statusId === 'stun' && enemy.active && !this.hasStatus (enemy.active, 'stun')) {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: { sideId: this.opponentId (sideId), zone: 'active' }, score: 95, reason: 'Shut off enemy turn' });
-					}
-
-					if (support.effect.kind === 'status' && support.effect.statusId === 'burn' && enemy.active && !this.hasStatus (enemy.active, 'burn')) {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: { sideId: this.opponentId (sideId), zone: 'active' }, score: 55, reason: 'Apply pressure over time' });
-					}
-
-					if (support.effect.kind === 'status' && support.effect.statusId === 'guarded' && side.active && !this.hasStatus (side.active, 'guarded')) {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: { sideId, zone: 'active' }, score: 52, reason: 'Protect active battler' });
-					}
-
-					if (support.effect.kind === 'heal' && side.active && side.active.currentHp <= getCard (side.active.cardId).hp - 20) {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: { sideId, zone: 'active' }, score: 60, reason: 'Heal damaged active' });
-					}
-
-					if (support.effect.kind === 'buff' && side.active) {
-						options.push ({ type: 'support', instanceId: entry.instanceId, targetRef: { sideId, zone: 'active' }, score: 70, reason: 'Increase attack pressure' });
-					}
-
-					if (support.effect.kind === 'swap' && side.bench.length > 0) {
+						const handDeficit = 6 - side.hand.length;
 						options.push ({
 							type: 'support',
 							instanceId: entry.instanceId,
-							targetRef: { sideId, zone: 'bench', index: this.chooseBestPromotionIndex (sideId) },
-							score: 45,
+							targetRef: null,
+							score: 20 + (handDeficit * 10),
+							reason: 'Refill hand'
+						});
+					}
+
+					if (support.effect.kind === 'status' && support.effect.statusId === 'stun' && enemy.active && !this.hasStatus (enemy.active, 'stun')) {
+						const enemyCanAttack = enemy.active.attachedEnergy && this.canAffordAttack (enemy.active, getCard (enemy.active.cardId).attacks[0]);
+						options.push ({
+							type: 'support',
+							instanceId: entry.instanceId,
+							targetRef: { sideId: this.opponentId (sideId), zone: 'active' },
+							score: enemyCanAttack ? 110 : 75,
+							reason: 'Shut off enemy turn'
+						});
+					}
+
+					if (support.effect.kind === 'status' && support.effect.statusId === 'burn' && enemy.active && !this.hasStatus (enemy.active, 'burn')) {
+						options.push ({
+							type: 'support',
+							instanceId: entry.instanceId,
+							targetRef: { sideId: this.opponentId (sideId), zone: 'active' },
+							score: 55 + (enemy.active.currentHp / 2),
+							reason: 'Apply pressure over time'
+						});
+					}
+
+					if (support.effect.kind === 'status' && support.effect.statusId === 'guarded' && side.active && !this.hasStatus (side.active, 'guarded')) {
+						const lowHealth = side.active.currentHp < getCard (side.active.cardId).hp * 0.5;
+						options.push ({
+							type: 'support',
+							instanceId: entry.instanceId,
+							targetRef: { sideId, zone: 'active' },
+							score: lowHealth ? 85 : 52,
+							reason: 'Protect active battler'
+						});
+					}
+
+					if (support.effect.kind === 'heal' && side.active) {
+						const missingHp = getCard (side.active.cardId).hp - side.active.currentHp;
+						if (missingHp >= 20) {
+							options.push ({
+								type: 'support',
+								instanceId: entry.instanceId,
+								targetRef: { sideId, zone: 'active' },
+								score: 40 + missingHp,
+								reason: 'Heal damaged active'
+							});
+						}
+					}
+
+					if (support.effect.kind === 'buff' && side.active) {
+						options.push ({
+							type: 'support',
+							instanceId: entry.instanceId,
+							targetRef: { sideId, zone: 'active' },
+							score: side.turnFlags.attacked ? 10 : 70,
+							reason: 'Increase attack pressure'
+						});
+					}
+
+					if (support.effect.kind === 'swap' && side.bench.length > 0) {
+						const bestBenchIndex = this.chooseBestPromotionIndex (sideId);
+						const bestBench = side.bench[bestBenchIndex];
+						const currentStrong = side.active && this.canAffordAttack (side.active, getCard (side.active.cardId).attacks[0]);
+
+						options.push ({
+							type: 'support',
+							instanceId: entry.instanceId,
+							targetRef: { sideId, zone: 'bench', index: bestBenchIndex },
+							score: currentStrong ? 20 : 65,
 							reason: 'Improve active position'
 						});
 					}
@@ -974,12 +1038,19 @@
 			}
 
 			if (!side.turnFlags.energyAttached && side.active) {
-				options.push ({ type: 'attach-active', score: 65, reason: 'Advance active attacker' });
+				const activeNeedsEnergy = getCard (side.active.cardId).attacks.some (a => !this.canAffordAttack (side.active, a));
+				options.push ({
+					type: 'attach-active',
+					score: activeNeedsEnergy ? 85 : 40,
+					reason: 'Advance active attacker'
+				});
+
 				side.bench.forEach ((entry, index) => {
+					const benchNeedsEnergy = getCard (entry.cardId).attacks.some (a => !this.canAffordAttack (entry, a));
 					options.push ({
 						type: 'attach-bench',
 						benchIndex: index,
-						score: 30 + getCard (entry.cardId).attacks.reduce ((max, attack) => Math.max (max, attack.baseDamage), 0),
+						score: (benchNeedsEnergy ? 50 : 20) + getCard (entry.cardId).attacks.reduce ((max, attack) => Math.max (max, attack.baseDamage), 0) / 2,
 						reason: 'Set up a benched attacker'
 					});
 				});
@@ -993,7 +1064,7 @@
 						options.push ({
 							type: 'attack',
 							attackIndex: index,
-							score: (lethal ? 140 : 80) + damage,
+							score: (lethal ? 200 : 80) + damage,
 							reason: lethal ? 'Take the KO' : 'Best attack line'
 						});
 					}
@@ -1001,24 +1072,27 @@
 			}
 
 			if (!side.turnFlags.retreated && side.active && side.bench.length > 0 && !this.hasBlockingStatus (side.active, 'retreat')) {
-				const currentDamage = getCard (side.active.cardId).attacks.reduce ((max, attack) => (
+				const activeDefinition = getCard (side.active.cardId);
+				const currentDamage = activeDefinition.attacks.reduce ((max, attack) => (
 					this.canAffordAttack (side.active, attack) ? Math.max (max, attack.baseDamage) : max
 				), 0);
 
+				const criticalHealth = side.active.currentHp <= activeDefinition.hp * 0.25;
+
 				side.bench.forEach ((entry, index) => {
 					const benchDamage = getCard (entry.cardId).attacks.reduce ((max, attack) => Math.max (max, attack.baseDamage), 0);
-					if (benchDamage > currentDamage && totalEnergy (side.active.attachedEnergy) >= getCard (side.active.cardId).retreatCost) {
+					if ((benchDamage > currentDamage || criticalHealth) && totalEnergy (side.active.attachedEnergy) >= activeDefinition.retreatCost) {
 						options.push ({
 							type: 'retreat',
 							benchIndex: index,
-							score: 68 + benchDamage,
-							reason: 'Bench battler is stronger'
+							score: (criticalHealth ? 120 : 60) + benchDamage,
+							reason: criticalHealth ? 'Save active battler' : 'Bench battler is stronger'
 						});
 					}
 				});
 			}
 
-			options.push ({ type: 'end-turn', score: 0, reason: 'Fallback pass' });
+			options.push ({ type: 'end-turn', score: 5, reason: 'Fallback pass' });
 			return options;
 		}
 
@@ -1159,8 +1233,8 @@
 						${flagChip ('Retreat Used', player.turnFlags.retreated)}
 						${flagChip ('Attack Used', player.turnFlags.attacked)}
 					</div>
-					${this.state.awaitingPromotion === 'player' ? '<div class="ccl-prompt-banner">Promotion required: choose your next active battler.</div>' : ''}
-					${this.state.pendingAction ? '<div class="ccl-prompt-banner">Support target selection active.</div>' : ''}
+					${this.state.awaitingPromotion === 'player' ? '<div class="ccl-prompt-banner ccl-prompt-banner--urgent">PROMOTION REQUIRED: Select a battler from your bench to advance.</div>' : ''}
+					${this.state.pendingAction ? '<div class="ccl-prompt-banner ccl-prompt-banner--action">TARGETING: Select a valid target on the board or cancel below.</div>' : ''}
 				</div>
 			`;
 		}
@@ -1184,11 +1258,12 @@
 			return `
 				<section class="ccl-zone${canTarget ? ' is-targetable' : ''}">
 					<div class="ccl-zone-label">${escapeHtml (label)}</div>
-					<div class="ccl-zone-card${inspected}">
+					<div class="ccl-zone-card${inspected}${battler.isFlashing ? ' ccl-is-flashing' : ''}" data-element="${definition.element}">
 						<div class="ccl-card-title-row">
 							<strong>${escapeHtml (definition.name)}</strong>
-							<span>${escapeHtml (definition.element)}</span>
+							<span class="ccl-element-pill">${escapeHtml (definition.element)}</span>
 						</div>
+						<div class="ccl-card-art"></div>
 						<div class="ccl-hp-row">
 							<span>HP</span>
 							<strong>${battler.currentHp}/${definition.hp}</strong>
@@ -1218,13 +1293,20 @@
 			const isPlayer = sideId === 'player';
 
 			return `
-				<div class="ccl-bench-card${canTarget ? ' is-targetable' : ''}${inspected}">
+				<div class="ccl-bench-card${canTarget ? ' is-targetable' : ''}${inspected}${battler.isFlashing ? ' ccl-is-flashing' : ''}" data-element="${definition.element}">
 					<div class="ccl-card-title-row">
 						<strong>${escapeHtml (definition.name)}</strong>
-						<span>${battler.currentHp}/${definition.hp} HP</span>
+						<span class="ccl-element-pill">${escapeHtml (definition.element)}</span>
 					</div>
-					<div class="ccl-hp-bar" data-hp="${battler.currentHp <= definition.hp * 0.25 ? 'critical' : battler.currentHp <= definition.hp * 0.5 ? 'low' : 'ok'}" style="--hp-pct: ${Math.round (battler.currentHp / definition.hp * 100)}%"><div class="ccl-hp-bar-fill"></div></div>
-					<small>${escapeHtml (formatEnergy (battler.attachedEnergy))}</small>
+					<div class="ccl-card-art"></div>
+					<div class="ccl-hp-row">
+						<span>HP</span>
+						<strong>${battler.currentHp}/${definition.hp}</strong>
+					</div>
+					<div class="ccl-hp-bar ccl-hp-bar--mini" data-hp="${battler.currentHp <= definition.hp * 0.25 ? 'critical' : battler.currentHp <= definition.hp * 0.5 ? 'low' : 'ok'}" style="--hp-pct: ${Math.round (battler.currentHp / definition.hp * 100)}%"><div class="ccl-hp-bar-fill"></div></div>
+					<div class="ccl-energy-row">
+						<small>${escapeHtml (formatEnergy (battler.attachedEnergy))}</small>
+					</div>
 					${this.renderStatusChips (battler)}
 					<div class="ccl-bench-actions">
 						<button type="button" class="ccl-secondary-button" data-action="inspect" data-instance-id="${escapeHtml (battler.instanceId)}">Inspect</button>
@@ -1292,12 +1374,25 @@
 							<span>Retreat</span>
 							<strong>${card.retreatCost}</strong>
 						</div>
-						${this.renderStatusChips (battler)}
+						<div class="ccl-inspector-statuses">
+							${battler.statuses.length ? battler.statuses.map ((status) => {
+								const def = this.getStatusDefinition (status.statusId);
+								return `
+									<div class="ccl-status-entry">
+										<span class="ccl-status-chip ${def.chipClass}">${def.label}</span>
+										<small>${escapeHtml (def.description)} (${status.turnsRemaining} turn${status.turnsRemaining === 1 ? '' : 's'} left)</small>
+									</div>
+								`;
+							}).join ('') : '<p class="ccl-inspector-meta">No active statuses.</p>'}
+						</div>
 						<div class="ccl-inspector-attacks">
 							${card.attacks.map ((attack) => `
 								<div class="ccl-attack-chip">
-									<strong>${escapeHtml (attack.name)}</strong>
-									<small>${escapeHtml (formatCost (attack.cost))} | ${attack.baseDamage} damage</small>
+									<div class="ccl-card-title-row">
+										<strong>${escapeHtml (attack.name)}</strong>
+										<strong>${attack.baseDamage} DMG</strong>
+									</div>
+									<small>Cost: ${escapeHtml (formatCost (attack.cost))}</small>
 								</div>
 							`).join ('')}
 						</div>

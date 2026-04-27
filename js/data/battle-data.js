@@ -121,6 +121,42 @@
 				{ id: 'coal_ram', name: 'Coal Ram', cost: { fire: 1, colorless: 1 }, baseDamage: 30 },
 				{ id: 'crown_inferno', name: 'Crown Inferno', cost: { fire: 2, colorless: 1 }, baseDamage: 70 }
 			]
+		},
+		ironclad_011: {
+			id: 'ironclad_011',
+			type: 'battler',
+			name: 'Ironclad',
+			element: 'metal',
+			hp: 120,
+			retreatCost: 3,
+			attacks: [
+				{ id: 'heavy_slam', name: 'Heavy Slam', cost: { metal: 2, colorless: 1 }, baseDamage: 50 },
+				{ id: 'fortify', name: 'Fortify', cost: { metal: 1 }, baseDamage: 10 }
+			]
+		},
+		skystream_012: {
+			id: 'skystream_012',
+			type: 'battler',
+			name: 'Skystream',
+			element: 'wind',
+			hp: 60,
+			retreatCost: 0,
+			attacks: [
+				{ id: 'gust_blade', name: 'Gust Blade', cost: { wind: 1 }, baseDamage: 30 },
+				{ id: 'aerial_loop', name: 'Aerial Loop', cost: { wind: 1, colorless: 1 }, baseDamage: 40 }
+			]
+		},
+		voltspike_013: {
+			id: 'voltspike_013',
+			type: 'battler',
+			name: 'Voltspike',
+			element: 'electric',
+			hp: 80,
+			retreatCost: 1,
+			attacks: [
+				{ id: 'needle_charge', name: 'Needle Charge', cost: { electric: 1 }, baseDamage: 30 },
+				{ id: 'static_burst', name: 'Static Burst', cost: { electric: 2 }, baseDamage: 60 }
+			]
 		}
 	};
 
@@ -187,6 +223,24 @@
 			target: 'ally_any',
 			effect: { kind: 'buff', attackBonus: 20, expires: 'turn_end' },
 			rulesText: 'One of your battlers gets +20 damage this turn.'
+		},
+		system_shock_105: {
+			id: 'system_shock_105',
+			type: 'support',
+			name: 'System Shock',
+			element: 'electric',
+			target: 'enemy_active',
+			effect: { kind: 'status', statusId: 'stun' },
+			rulesText: 'Stun the enemy active battler.'
+		},
+		adrenaline_shot_106: {
+			id: 'adrenaline_shot_106',
+			type: 'support',
+			name: 'Adrenaline Shot',
+			element: 'alloy',
+			target: 'ally_any',
+			effect: { kind: 'buff', attackBonus: 20 },
+			rulesText: 'Selected battler deals +20 damage this turn.'
 		}
 	};
 
@@ -196,6 +250,7 @@
 		burn: {
 			id: 'burn',
 			label: 'Burn',
+			description: 'Takes 10 damage at the end of each turn.',
 			chipClass: 'ccl-status-burn',
 			durationPhase: 'turn_end',
 			defaultTurns: 3,
@@ -204,6 +259,7 @@
 		stun: {
 			id: 'stun',
 			label: 'Stun',
+			description: 'Cannot attack or retreat while stunned.',
 			chipClass: 'ccl-status-stun',
 			durationPhase: 'turn_end',
 			defaultTurns: 1,
@@ -212,6 +268,7 @@
 		guarded: {
 			id: 'guarded',
 			label: 'Guarded',
+			description: 'Reduces the next incoming attack by 20 damage.',
 			chipClass: 'ccl-status-guarded',
 			durationPhase: 'turn_end',
 			defaultTurns: 1,
@@ -262,6 +319,21 @@
 				'reefdrake_007', 'reefdrake_007', 'reefdrake_007',
 				'galehound_006', 'skyviper_008', 'mistfin_005', 'reefdrake_007',
 				'static_jam_105', 'tempo_script_107', 'guard_shift_103', 'blaze_playbook_101'
+			]
+		},
+		starter_storm: {
+			id: 'starter_storm',
+			name: 'Starter Storm',
+			description: 'A hybrid Electric/Wind deck focused on speed and disruption.',
+			energyTypes: ['electric', 'wind'],
+			cards: [
+				'voltspike_013', 'voltspike_013', 'voltspike_013', 'voltspike_013',
+				'skystream_012', 'skystream_012', 'skystream_012', 'skystream_012',
+				'voltrix_002', 'voltrix_002', 'voltrix_002', 'voltrix_002',
+				'galehound_006', 'galehound_006',
+				'system_shock_105', 'system_shock_105', 'system_shock_105', 'system_shock_105',
+				'adrenaline_shot_106', 'adrenaline_shot_106',
+				'blaze_playbook_101', 'blaze_playbook_101', 'blaze_playbook_101', 'blaze_playbook_101'
 			]
 		}
 	};
@@ -317,6 +389,19 @@
 			storyFlags: {
 				victory: ['beat_rook_round1'],
 				defeat: ['lost_to_rook_round1']
+			}
+		},
+		harbor_city_filler: {
+			id: 'harbor_city_filler',
+			label: 'Harbor City Open - Qualifier',
+			opponentId: 'rook', // Will be overridden by engine
+			playerDeckId: 'starter_blaze',
+			enemyDeckId: 'starter_tide',
+			tournamentId: 'harbor_city_open',
+			roundId: 'early_match',
+			rewards: {
+				victory: { credits: 20, cards: [], packs: [], items: [] },
+				defeat:  { credits: 5,  cards: [], packs: [], items: [] }
 			}
 		}
 	};

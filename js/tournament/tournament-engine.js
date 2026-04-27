@@ -63,7 +63,7 @@
 			case 'quick_win':            handleQuickWin ();           break;
 			case 'continue_result':      showBetweenRoundLounge ();   break;
 			case 'continue_lounge':      continueFromLounge ();       break;
-			case 'launch_battle':        launchFinalBattle ();        break;
+			case 'launch_battle':        launchBattle ();             break;
 			case 'close_summary':        closeSummary ();             break;
 		}
 	}
@@ -75,26 +75,31 @@
 		return arr[Math.floor (Math.random () * arr.length)];
 	}
 
-	function miraLine (key) {
-		const pool = (window.CCLTournamentFlavor.lines.mira[key] || []);
-		const item = pickRandom (pool);
-		return item ? (typeof item === 'string' ? item : item.text) : '';
+	function getFlavorContext (extra = {}) {
+		const progression = window.CCLProgressionState.getState ();
+		const rel = progression.relationship || {};
+		return Object.assign ({
+			miraTrust:     rel.miraTrust     || 0,
+			rookHeat:      rel.rookHeat      || 0,
+			tournamentRep: rel.tournamentRep || 0,
+			crowdFavor:    rel.crowdFavor    || 0
+		}, extra);
 	}
 
-	function rookLine (key) {
-		const pool = (window.CCLTournamentFlavor.lines.rook[key] || []);
-		const item = pickRandom (pool);
-		return item ? (typeof item === 'string' ? item : item.text) : '';
+	function miraLine (key, extra = {}) {
+		return window.CCLTournamentFlavor.pickLine ('mira', key, getFlavorContext (extra));
+	}
+
+	function rookLine (key, extra = {}) {
+		return window.CCLTournamentFlavor.pickLine ('rook', key, getFlavorContext (extra));
+	}
+
+	function commentatorLine (key, extra = {}) {
+		return window.CCLTournamentFlavor.pickLine ('commentator', key, getFlavorContext (extra));
 	}
 
 	function crowdLine () {
 		return pickRandom (window.CCLTournamentFlavor.lines.crowd || []);
-	}
-
-	function commentatorLine (key) {
-		const pool = (window.CCLTournamentFlavor.lines.commentator[key] || []);
-		const item = pickRandom (pool);
-		return item ? (typeof item === 'string' ? item : item.text) : '';
 	}
 
 	function playerName () {
@@ -276,14 +281,22 @@
 		const mKey        = isFinal ? 'prematch_support_rook' : 'prematch_support_filler';
 		const mLine       = miraLine (mKey);
 		const cKey        = isFeature ? 'featured_match' : '';
-		const cLine       = cKey ? commentatorLine (cKey).replace ('{{player.name}}', playerName ()) : '';
+		const cLine       = cKey ? commentatorLine (cKey, { featuredMatch: isFeature }).replace ('{{player.name}}', playerName ()) : '';
 		const opLine      = pickRandom (opData.introLinePool || ['']);
-
-		const actionId    = isFinal ? 'launch_battle' : 'quick_win';
-		const actionLabel = isFinal ? 'Start Feature Match' : 'Quick Match';
 
 		const pName = playerName ();
 		const dName = deckName ();
+
+		const buttonContainer = isFinal
+			? '<button class="ccl-t-cta ccl-t-cta--featured" data-ccl-t-action="launch_battle">Start Feature Match</button>'
+			: `
+				<div class="ccl-t-button-row">
+					<button class="ccl-t-cta" data-ccl-t-action="launch_battle">Play Match</button>
+					<button class="ccl-t-cta ccl-t-cta--secondary" data-ccl-t-action="quick_win">Quick Match</button>
+				</div>
+			`;
+
+		const portraitClass = opData.portraitKey ? `ccl-t-portrait--${opData.portraitKey}` : 'ccl-t-portrait--opponent';
 
 		setScreen (
 			'<div class="ccl-t-screen ccl-t-screen--matchcard' + (isFeature ? ' ccl-t-screen--featured' : '') + '">' +
@@ -300,7 +313,7 @@
 						'<div class="ccl-t-vs-label">VS</div>' +
 						// Opponent side
 						'<div class="ccl-t-vs-card ccl-t-vs-card--opponent">' +
-							'<div class="ccl-t-portrait ccl-t-portrait--opponent">' + (opData.name ? opData.name[0] : '?') + '</div>' +
+							'<div class="ccl-portrait ' + portraitClass + '">' + (opData.name ? opData.name[0] : '?') + '</div>' +
 							'<div class="ccl-t-vs-name">' + opData.name + '</div>' +
 							'<div class="ccl-t-vs-meta">' + (opData.district || '') + ' &middot; ' + (opData.deckArchetype || '') + '</div>' +
 							'<div class="ccl-t-badges">' + renderBadges (opData.badgeTags || []) + '</div>' +
@@ -311,7 +324,7 @@
 					(opLine ? '<div class="ccl-t-line-block ccl-t-line-block--opponent">&#8220;' + opLine + '&#8221;</div>' : '') +
 					lineBlock ('Mira', mLine, 'mira') +
 					lineBlock ('Caster Vale', cLine, 'commentator') +
-					'<button class="ccl-t-cta' + (isFeature ? ' ccl-t-cta--featured' : '') + '" data-ccl-t-action="' + actionId + '">' + actionLabel + '</button>' +
+					buttonContainer +
 				'</div>' +
 			'</div>'
 		);
@@ -358,6 +371,7 @@
 	function showBetweenRoundLounge () {
 		_state.screen    = 'lounge';
 		const mLine      = miraLine ('between_round');
+		const cLine      = commentatorLine ('lounge_filler');
 		const crowd      = crowdLine ();
 		const nextPath   = _state.bracket.playerPath[_state.roundIndex];
 		const nextRound  = nextPath ? _state.event.rounds.find (function (r) { return r.id === nextPath.roundId; }) : null;
@@ -375,6 +389,7 @@
 						'<div class="ccl-t-standing-chip"><span class="ccl-t-standing-label">Losses</span><span class="ccl-t-standing-value">' + _state.losses + '</span></div>' +
 					'</div>' +
 					lineBlock ('Mira', mLine, 'mira') +
+					lineBlock ('Caster Vale', cLine, 'commentator') +
 					(crowd ? '<div class="ccl-t-line-block ccl-t-line-block--crowd">' + crowd + '</div>' : '') +
 					(nextPath ? '<div class="ccl-t-lounge-next"><div class="ccl-t-next-label">Up Next</div><div class="ccl-t-next-value">' + nextLabel + ' &mdash; vs ' + nextOpName + '</div></div>' : '') +
 					'<button class="ccl-t-cta" data-ccl-t-action="continue_lounge">Continue</button>' +
@@ -401,45 +416,56 @@
 		}
 	}
 
-	// ─── Launch final battle (Rook) ───────────────────────────────────────────────
+	// ─── Launch battle (Rook or Filler) ──────────────────────────────────────────
+	function launchBattle () {
+		const round = _state.currentRound;
+		const opponent = round.opponent.authored || round.opponent;
+		const isFinal = round.roundId === 'rook_round';
 
-	function launchFinalBattle () {
-		// The overlay stays visible underneath the battle system's own overlay (z-index layering).
+		const battleId = opponent.battleId || (isFinal ? 'harbor_city_rook' : 'harbor_city_filler');
 		const playerDeckId = window.CCLProgressionState.getSelectedDeckId ();
 
-		window.CardBattleBridge.startBattle ('harbor_city_rook', {
+		window.CardBattleBridge.startBattle (battleId, {
 			playerDeckId: playerDeckId,
-			storyContext: { mentor: 'mira', rival: 'rook' }
+			enemyDeckId:  opponent.deckId || 'starter_tide',
+			storyContext: { mentor: 'mira', rival: opponent.id || 'filler' }
 		}).then (function (result) {
-			handleFinalBattleResult (result);
+			handleBattleResult (result);
 		}).catch (function () {
-			// Fallback: treat as player loss if battle system fails to complete
-			handleFinalBattleResult ({
+			// Fallback: treat as player loss
+			handleBattleResult ({
 				winner: 'enemy',
-				battleId: 'harbor_city_rook',
-				rewards: { credits: 25, cards: [], packs: [], items: [] },
-				affinityChanges: { rook: 1, mira: 1 },
-				storyFlags: ['lost_to_rook_round1'],
+				battleId: battleId,
+				rewards: { credits: 5, cards: [], packs: [], items: [] },
+				affinityChanges: {},
+				storyFlags: [],
 				score: { playerPoints: 0, enemyPoints: 3 }
 			});
 		});
 	}
 
-	// ─── Handle final battle result ───────────────────────────────────────────────
-
-	function handleFinalBattleResult (result) {
+	// ─── Handle battle result ────────────────────────────────────────────────────
+	function handleBattleResult (result) {
 		const playerWon = result.winner === 'player';
+		const round = _state.currentRound;
 
 		if (playerWon) {
-			_state.wins   += 1;
+			_state.wins += 1;
+			_state.roundsCleared.push (round.roundId);
 		} else {
 			_state.losses += 1;
 		}
-		_state.roundsCleared.push ('rook_round');
+
 		_state.battleResult = result;
+		_state.roundIndex += 1; // Advance after match
 
 		applyTournamentProgressionChanges (result, playerWon);
-		showFinalResult (playerWon, result.rewards || {});
+
+		if (round.roundId === 'rook_round') {
+			showFinalResult (playerWon, result.rewards || {});
+		} else {
+			showRoundResult (playerWon, round, result.rewards || {});
+		}
 	}
 
 	// ─── Apply progression changes after final battle ─────────────────────────────
@@ -461,10 +487,10 @@
 			nextScene:        playerWon ? ev.victoryScene : ev.defeatScene,
 			tournamentUpdate: {
 				tournamentId: ev.id,
-				roundCleared: 'rook_round',
-				nextRoundId:  'result_branch',
+				roundCleared: _state.currentRound.roundId,
+				nextRoundId:  _state.currentRound.nextRoundId,
 				eliminated:   !playerWon,
-				champion:      playerWon
+				champion:     playerWon && _state.currentRound.roundId === 'rook_round'
 			}
 		});
 
@@ -504,7 +530,11 @@
 					'<div class="ccl-t-result-rewards">' +
 						(credits > 0 ? '<div class="ccl-t-reward-chip">+' + credits + ' Credits</div>' : '') +
 						(hasCard    ? '<div class="ccl-t-reward-chip">Card Reward</div>' : '') +
-						'<div class="ccl-t-reward-chip">' + placement + ' Badge</div>' +
+						(function () {
+							const bKey = playerWon ? 'champion' : 'finalist';
+							const bDef = window.CCLTournamentFlavor.BADGE_DISPLAY[bKey];
+							return '<div class="ccl-t-reward-chip" style="background:' + bDef.color + '22; border-color:' + bDef.color + '; color:' + bDef.color + '">' + bDef.label + ' Badge</div>';
+						})() +
 					'</div>' +
 					lineBlock ('Rook', rLine, 'rook') +
 					lineBlock ('Mira', mLine, 'mira') +
